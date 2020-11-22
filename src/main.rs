@@ -1,10 +1,5 @@
-use http::Request;
-use http::Method;
-use server::Server;
-
-mod test;
-mod http;
 mod server;
+use server::Server;
 
 
 fn main() {
