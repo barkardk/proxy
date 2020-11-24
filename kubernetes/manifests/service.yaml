@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webserver-debug
+spec:
+  selector:
+    app: webserver-debug
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      name: server
+    - protocol: TCP
+      port: 1234
+      targetPort: 1234
+      name: debug

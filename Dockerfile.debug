@@ -1,0 +1,11 @@
+FROM ubuntu:18.04
+ENV RELEASE=debug
+RUN apt-get update && apt-get install -y \
+    gdbserver \
+    gdb \
+    curl
+COPY src app/src/
+COPY target/x86_64-unknown-linux-musl/${RELEASE}/webserver /app/webserver
+EXPOSE 1234
+CMD gdbserver :1234 /app/webserver
+

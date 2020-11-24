@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver-debug
+  labels:
+    app: webserver-debug
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webserver-debug
+  template:
+    metadata:
+      name: webserver
+      labels:
+        app: webserver-debug
+    spec:
+      containers:
+        - name: webserver-debug
+          image: docker.io/xkbarkar/webserver:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: server
+            - containerPort: 1234
+              name: debug
