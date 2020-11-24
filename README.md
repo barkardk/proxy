@@ -1,39 +1,53 @@
 # Webservice
+A small rust project mainly to practice remote debugging and tracing. This is intended to figure out how rust ownership works in a live remote environment as well as locally 
+
 ## Makefile
- 
+To see what options there are run 
 ```bash
-make help
+#> make 
+
+cross                          Add dependencies needed for cross compilation
+darwin                         Build a webserver debug binary on darwin
+debug                          Create a docker container with a debug mode compiled binary and source code. Expose the binary via gdbserver on port 1234. Tag and push docker to registry
+dev                            Cross compile a linux binary from darwin in debug mode
+release                        Cross compile a linux binary in release mode (Takes longer)
+run                            Build and run a docker container locally with debugger on port 1234
+test                           Run cargo test on all integration tests
+
 ```
 
 
-## Build and deploy to kubernetes
+## Build a GDB enabled debug container and deploy to kubernetes
 ```bash
-make debug
+❯ make debug
 ```
-make debug  
+This will build a linux binary with debug symbols, generate a docker container that holds a remote gdbdebugger and upload that container to   
+a remote docker registry.  
+To deploy the container to kubernetes run   
+``` bash 
+❯ kubectl apply -f kubernetes/manifests/
+``` 
+And there should we a webserver container and a webserver service available in the cluster.  
 
 
-## Remote debugging
+### Remote debugging
 You need gnu debugger installed to use this. 
 To debug a container running on kubernetes we can use gdb remote debugger. 
 Here is an example of how to try that out
 ```bash
-cd tutorials/webserver/src
+❯ cd tutorials/webserver/src
 gdb
 (gdb) set sysroot target:/
 ```
-
+In another session forward the gdbserver port to localhost port 1234 
 ```bash
-
-```
-
-```bash
-❯ k port-forward svc/webserver-debug 1234
+❯ kubectl port-forward svc/webserver-debug 1234
 Forwarding from 127.0.0.1:1234 -> 1234
 Forwarding from [::1]:1234 -> 1234
 Handling connection for 1234
 ```
 
+And then connect to the debug port via localhost in gdb
 ```bash
 (gdb) target remote 127.0.0.1:1234
 Remote debugging using 127.0.0.1:1234
@@ -64,16 +78,16 @@ Breakpoint 1, webserver::main () at src/main.rs:6
 
 Use gdb commands such as 
 ```bash
-break src/server.rs 
+❯ break src/server.rs 
 
-break main
+❯ break main
 
-show
+❯ show
 
-list
+❯ list
 
-bt
+❯ bt
 
-continue
+❯ continue
 ```
 Here are a few good examples https://visualgdb.com/gdbreference/commands/set_sysroot  
