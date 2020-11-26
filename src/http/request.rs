@@ -4,7 +4,8 @@ use std::error::Error;
 use std::fmt::{Display, Debug};
 use core::fmt;
 use std::str;
-use tracing::stdlib::fs::read_to_string;
+use crate::http::method::MethodError;
+use std::str::Utf8Error;
 
 
 pub struct Request {
@@ -29,6 +30,7 @@ impl TryFrom<&[u8]> for Request {
         if protocol != "HTTP/1.1." {
             return Err(ParseError::InvalidProtocol);
         }
+        let method: Method = method.parse()?;
 
     }
 }
@@ -59,6 +61,16 @@ impl ParseError {
     }
 }
 impl Error for ParseError {}
+impl From<MethodError> for ParseError {
+    fn from(_: MethodError) -> Self {
+        Self::InvalidMethod
+    }
+}
+impl From<Utf8Error> for ParseError{
+    fn from(_: Utf8Error) -> Self {
+        Self::InvalidEncoding
+    }
+}
 impl Display for ParseError{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.message())
