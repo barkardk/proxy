@@ -4,6 +4,7 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST)  | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+build: build.darwin ## Build darwin binary , no testing
 darwin: test build.darwin  ## Build a webserver debug binary on darwin
 dev: test build.linux.debug	 ## Cross compile a linux binary from darwin in debug mode
 debug: test build.linux.debug build.docker.debug ## Create a docker container with a debug mode compiled binary and source code. Expose the binary via gdbserver on port 1234. Tag and push docker to registry

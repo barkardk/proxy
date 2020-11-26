@@ -1,5 +1,5 @@
 # Proxy
-# Proxy
+
 A small rust project mainly to practice remote debugging and tracing. This is intended to figure out how rust ownership works in a live remote environment as well as locally 
 
 ## Makefile

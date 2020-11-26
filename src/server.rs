@@ -1,5 +1,8 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::Read;
+use crate::http::method;
+use crate::http::request::Request;
+use std::convert::TryFrom;
 
 pub struct Server {
     addr: String,
@@ -21,8 +24,14 @@ impl Server {
             match listener.accept() {
                 Ok((mut socket, addr)) =>  {
                     let mut buffer = [0; 1024];
-                    match socket.read(&mut buffer) {
-                        Ok(_) => println!("new client: {}", String::from_utf8_lossy(&buffer)),
+                    match socket.read(&mut buffer ) {
+                        Ok(_) =>{
+                            println!("new client: {}", String::from_utf8_lossy(&buffer)),
+                            match Request::try_from(&buffer[..]) {
+                                Ok(request)=> {},
+                                Err(e)=> println!("[ERROR] {}", e),
+                            }
+                        }
                         Err(e) => println!("[ERROR] {}", e),
                     }
 
